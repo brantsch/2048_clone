@@ -34,65 +34,54 @@ public class GameLogic {
 	 *            The direction in which a move would be attempted.
 	 */
 	public void doMove(Direction d) throws GameOver {
-		int dx, dy;
-		boolean already_has_fold[] = new boolean[dimen];
-		for (int i = 0; i < dimen; ++i) {
-			already_has_fold[i] = false;
-		}
-		boolean do_fold = false;
+		int dx, dy, offset;
 		switch (d) {
 		case UP:
+			dy = -1;
 			dx = 0;
-			dy = 1;
+			offset = dimen - 1;
 			break;
 		case DOWN:
+			dy = 1;
 			dx = 0;
-			dy = -1;
+			offset = 0;
 			break;
 		case LEFT:
-			dx = 1;
 			dy = 0;
+			dx = -1;
+			offset = dimen - 1;
 			break;
 		case RIGHT:
-			dx = -1;
 			dy = 0;
+			dx = 1;
+			offset = 0;
 			break;
 		default:
 			throw new RuntimeException("This must not ever happen!");
 		}
-		int fold_index = 0;
-		for (int y = 0; y < dimen; ++y) {
-			for (int x = 0; x < dimen; ++x) {
-				if (x + dx >= 0 && x + dx < dimen && y + dy >= 0
-						&& y + dy < dimen) {
-					do_fold = (grid[y][x] == grid[y + dy][x + dx]);
-					if (grid[y][x] == 0 || do_fold) {
-						grid[y][x] += grid[y + dy][x + dx];
-						grid[y + dy][x + dx] = 0;
-					}
-				}
+		for (int i = 0; i < dimen; ++i) {
+			if (d == Direction.UP || d == Direction.DOWN) {
+				squash(dx, dy, i, offset);
+			} else {
+				squash(dx, dy, offset, i);
 			}
 		}
 	}
 
-	public ArrayList<Integer> crush(ArrayList<Integer> ints, boolean forward) {
-		int offset = 0;
-		int length = ints.size();
-		int delta = 1;
-		boolean folded_yet = false;
-		ArrayList<Integer> crushedList = new ArrayList<Integer>(length);
-		if (!forward) {
-			delta = -1;
-			offset = length - 1;
-		}
-		for (int i = offset; i >= 0 && i < length; i += delta) {
-			if(i-delta>=0){
-				if((!folded_yet && ints.get(i) == ints.get(i-delta)) || ints.get(i) == 0){
-					
+	private void squash(int dx, int dy, int x, int y) {
+		boolean already_squashed = false;
+		for (; x >= 0 && x < dimen && y >= 0 && y < dimen; x += dx, y += dy) {
+			if (x + dx >= 0 && x + dx < dimen && y + dy >= 0 && y + dy < dimen) {
+				if (grid[y + dy][x + dx] == 0) {
+					grid[y + dy][x + dx] = grid[y][x];
+					grid[y][x] = 0;
+				} else if (!already_squashed && grid[y + dy][x + dx] == grid[y][x]) {
+					grid[y + dy][x + dx] += grid[y][x];
+					grid[y][x] = 0;
+					already_squashed = true;
 				}
 			}
 		}
-		return crushedList;
 	}
 
 	/**
