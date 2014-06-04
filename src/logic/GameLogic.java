@@ -35,6 +35,7 @@ public class GameLogic {
 	 */
 	public void doMove(Direction d) throws GameOver {
 		int dx, dy, offset;
+		checkGrid();
 		switch (d) {
 		case UP:
 			dy = -1;
@@ -68,28 +69,48 @@ public class GameLogic {
 		}
 	}
 
-	private void squash(int dx, int dy, int x, int y) {
+	private void checkGrid() throws GameOver {
+		boolean canMove = false;
+		for (int y = 0; y < dimen; ++y) {
+			for (int x = 0; x < dimen; ++x) {
+				canMove |= canMove(1, 0, y, x);
+				canMove |= canMove(-1, 0, y, x);
+				canMove |= canMove(0, 1, y, x);
+				canMove |= canMove(0, -1, y, x);
+			}
+		}
+		if (!canMove) {
+			throw new GameOver();
+		}
+	}
+
+	private boolean canMove(int dy, int dx, int y, int x) {
+		return (x + dx >= 0 && x + dx < dimen && y + dy >= 0 && y + dy < dimen)
+				&& (grid[y + dy][x + dx] == 0 || grid[y][x] == grid[y + dy][x + dx]);
+	}
+
+	private boolean squash(int dx, int dy, int x, int y) {
 		boolean already_squashed = false;
+		boolean successful = false;
 		for (; x >= 0 && x < dimen && y >= 0 && y < dimen; x += dx, y += dy) {
 			if (x + dx >= 0 && x + dx < dimen && y + dy >= 0 && y + dy < dimen) {
 				if (grid[y + dy][x + dx] == 0) {
 					grid[y + dy][x + dx] = grid[y][x];
 					grid[y][x] = 0;
+					successful = true;
 				} else if (!already_squashed && grid[y + dy][x + dx] == grid[y][x]) {
 					grid[y + dy][x + dx] += grid[y][x];
 					grid[y][x] = 0;
 					already_squashed = true;
+					successful = true;
 				}
 			}
 		}
+		return successful;
 	}
 
 	/**
-	 * Place a '2' on the playing field.
-	 * 
-	 * @throws Exception
-	 *             In case a situation arises which should be impossible in
-	 *             which there is no free cell after a move.
+	 * Place a '2' on the playing field, if possible, do nothing otherwise.
 	 */
 	public void place2() {
 		Random r = new Random();
