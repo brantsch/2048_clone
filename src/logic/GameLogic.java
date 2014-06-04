@@ -134,7 +134,7 @@ public class GameLogic {
 		String format = "";
 		for (int i = 0; i < dimen; ++i) {
 			for (int j = 0; j < dimen; ++j) {
-				System.out.printf("%d ", grid[i][j]);
+				System.out.printf("%4d ", grid[i][j]);
 			}
 			System.out.print('\n');
 			System.out.flush();
