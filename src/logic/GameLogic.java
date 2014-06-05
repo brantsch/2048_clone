@@ -34,38 +34,46 @@ public class GameLogic {
 	 *            The direction in which a move would be attempted.
 	 */
 	public void doMove(Direction d) throws GameOver {
-		int dx, dy, offset;
 		checkGrid();
-		switch (d) {
-		case UP:
-			dy = -1;
-			dx = 0;
-			offset = dimen - 1;
-			break;
-		case DOWN:
-			dy = 1;
-			dx = 0;
-			offset = 0;
-			break;
-		case LEFT:
-			dy = 0;
-			dx = -1;
-			offset = dimen - 1;
-			break;
-		case RIGHT:
-			dy = 0;
-			dx = 1;
-			offset = 0;
-			break;
-		default:
-			throw new RuntimeException("This must not ever happen!");
-		}
 		for (int i = 0; i < dimen; ++i) {
-			if (d == Direction.UP || d == Direction.DOWN) {
-				squash(dx, dy, i, offset);
-			} else {
-				squash(dx, dy, offset, i);
+			switch (d) {
+			case DOWN:
+				squash_column(i, 0, 1);
+				break;
+			case UP:
+				squash_column(i, dimen - 1, -1);
+				break;
+			case LEFT:
+				squash_row(i, dimen - 1, -1);
+				break;
+			case RIGHT:
+				squash_row(i, 0, 1);
+				break;
 			}
+		}
+	}
+
+	private void squash_column(int idx, int offset, int step) {
+		long output[];
+		long input[] = new long[dimen];
+		for(int i=offset,j=0;i>=0 && i<dimen;i += step,++j){
+			input[j] = grid[i][idx];
+		}
+		output = squash(input);
+		for(int i=offset,j=0;i>=0 && i<dimen;i += step,++j){
+			grid[i][idx] = output[j];
+		}
+	}
+
+	private void squash_row(int idx, int offset, int step) {
+		long output[];
+		long input[] = new long[dimen];
+		for(int i=offset,j=0;i>=0 && i<dimen;i += step,++j){
+			input[j] = grid[idx][i];
+		}
+		output = squash(input);
+		for(int i=offset,j=0;i>=0 && i<dimen;i += step,++j){
+			grid[idx][i] = output[j];
 		}
 	}
 
@@ -89,24 +97,23 @@ public class GameLogic {
 				&& (grid[y + dy][x + dx] == 0 || grid[y][x] == grid[y + dy][x + dx]);
 	}
 
-	private boolean squash(int dx, int dy, int x, int y) {
-		boolean already_squashed = false;
-		boolean successful = false;
-		for (; x >= 0 && x < dimen && y >= 0 && y < dimen; x += dx, y += dy) {
-			if (x + dx >= 0 && x + dx < dimen && y + dy >= 0 && y + dy < dimen) {
-				if (grid[y + dy][x + dx] == 0) {
-					grid[y + dy][x + dx] = grid[y][x];
-					grid[y][x] = 0;
-					successful = true;
-				} else if (!already_squashed && grid[y + dy][x + dx] == grid[y][x]) {
-					grid[y + dy][x + dx] += grid[y][x];
-					grid[y][x] = 0;
-					already_squashed = true;
-					successful = true;
-				}
+	private long[] squash(long numbers[]) {
+		long result[] = new long[dimen];
+		for (int i = 0; i < dimen; ++i) {
+			result[i] = 0;
+		}
+		for (int i = 0, j = 0; i < dimen - 1; ++i) {
+			if (numbers[i] == numbers[i + 1]) {
+				result[j] = numbers[i] * 2;
+				++i;
+				++j;
+			} else if (numbers[i] == 0) {
+			} else {
+				result[j] = numbers[i];
+				++j;
 			}
 		}
-		return successful;
+		return result;
 	}
 
 	/**
