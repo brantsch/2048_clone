@@ -38,43 +38,70 @@ public class GameLogic {
 		for (int i = 0; i < dimen; ++i) {
 			switch (d) {
 			case DOWN:
-				squash_column(i, 0, 1);
+				squash_column(i, true);
 				break;
 			case UP:
-				squash_column(i, dimen - 1, -1);
-				break;
-			case LEFT:
-				squash_row(i, dimen - 1, -1);
+				squash_column(i, false);
 				break;
 			case RIGHT:
-				squash_row(i, 0, 1);
+				squash_row(i, true);
+				break;
+			case LEFT:
+				squash_row(i, false);
 				break;
 			}
 		}
 	}
 
-	private void squash_column(int idx, int offset, int step) {
+	private void squash_column(int idx, boolean forward) {
 		long output[];
 		long input[] = new long[dimen];
-		for(int i=offset,j=0;i>=0 && i<dimen;i += step,++j){
-			input[j] = grid[i][idx];
+		for (int i = 0; i < dimen; ++i) {
+			input[i] = grid[(!forward ? i : dimen - 1 - i)][idx];
 		}
 		output = squash(input);
-		for(int i=offset,j=0;i>=0 && i<dimen;i += step,++j){
-			grid[i][idx] = output[j];
+		for (int i = 0; i < dimen; ++i) {
+			grid[(!forward ? i : dimen - 1 - i)][idx] = output[i];
 		}
 	}
 
-	private void squash_row(int idx, int offset, int step) {
+	private void squash_row(int idx, boolean forward) {
 		long output[];
 		long input[] = new long[dimen];
-		for(int i=offset,j=0;i>=0 && i<dimen;i += step,++j){
-			input[j] = grid[idx][i];
+		for (int i = 0; i < dimen; ++i) {
+			input[i] = grid[idx][(!forward ? i : dimen - 1 - i)];
 		}
 		output = squash(input);
-		for(int i=offset,j=0;i>=0 && i<dimen;i += step,++j){
-			grid[idx][i] = output[j];
+		for (int i = 0; i < dimen; ++i) {
+			grid[idx][(!forward ? i : dimen - 1 - i)] = output[i];
 		}
+	}
+
+	private long[] squash(long numbers[]) {
+		long result[] = new long[dimen];
+		for (int i = 0; i < dimen; ++i) {
+			result[i] = 0;
+		}
+		for (int i = 0, j = 0; i < dimen; ++i) {
+			if (numbers[i] == 0) {
+				continue;
+			}
+			int k;
+			for (k = i + 1; k < dimen && numbers[k] == 0; ++k)
+				;
+			if (k >= dimen) { // nothing to do, rest of numbers is just zeroes
+				result[j] = numbers[i];
+				break;
+			}
+			if (numbers[i] == numbers[k]) {
+				result[j++] = 2 * numbers[i];
+			} else if (numbers[i] != numbers[k]) {
+				result[j++] = numbers[i];
+				result[j++] = numbers[k];
+			}
+			i = k;
+		}
+		return result;
 	}
 
 	private void checkGrid() throws GameOver {
@@ -97,25 +124,6 @@ public class GameLogic {
 				&& (grid[y + dy][x + dx] == 0 || grid[y][x] == grid[y + dy][x + dx]);
 	}
 
-	private long[] squash(long numbers[]) {
-		long result[] = new long[dimen];
-		for (int i = 0; i < dimen; ++i) {
-			result[i] = 0;
-		}
-		for (int i = 0, j = 0; i < dimen - 1; ++i) {
-			if (numbers[i] == numbers[i + 1]) {
-				result[j] = numbers[i] * 2;
-				++i;
-				++j;
-			} else if (numbers[i] == 0) {
-			} else {
-				result[j] = numbers[i];
-				++j;
-			}
-		}
-		return result;
-	}
-
 	/**
 	 * Place a '2' on the playing field, if possible, do nothing otherwise.
 	 */
@@ -129,16 +137,13 @@ public class GameLogic {
 				}
 			}
 		}
-		if (freeCells.isEmpty()) {
-			throw new RuntimeException(
-					"This should never happen! After a move, there must be at least one free cell on the grid.");
+		if (!freeCells.isEmpty()) {
+			Tuple<Integer> t = freeCells.get(r.nextInt(freeCells.size()));
+			grid[t.getX()][t.getY()] = 2;
 		}
-		Tuple<Integer> t = freeCells.get(r.nextInt(freeCells.size()));
-		grid[t.getX()][t.getY()] = 2;
 	}
 
 	public void printGrid() {
-		String format = "";
 		for (int i = 0; i < dimen; ++i) {
 			for (int j = 0; j < dimen; ++j) {
 				System.out.printf("%4d ", grid[i][j]);
