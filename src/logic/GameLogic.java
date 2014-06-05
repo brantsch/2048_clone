@@ -103,11 +103,10 @@ public class GameLogic {
 			}
 			if (numbers[i] == numbers[k]) {
 				result[j++] = 2 * numbers[i];
+				i = k;
 			} else if (numbers[i] != numbers[k]) {
 				result[j++] = numbers[i];
-				result[j++] = numbers[k];
 			}
-			i = k;
 		}
 		return result;
 	}
