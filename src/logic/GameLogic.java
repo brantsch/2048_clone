@@ -14,7 +14,12 @@ import java.util.ArrayList;
  * 
  */
 public class GameLogic {
-	private static final int dimen = 4;
+	private final int dimen = 4;
+
+	public int getDimen() {
+		return dimen;
+	}
+
 	private long grid[][];
 
 	public GameLogic() {
@@ -24,6 +29,8 @@ public class GameLogic {
 				this.grid[i][j] = 0;
 			}
 		}
+		this.place2();
+		this.place2();
 	}
 
 	/**
@@ -51,6 +58,7 @@ public class GameLogic {
 				break;
 			}
 		}
+		this.place2();
 	}
 
 	private void squash_column(int idx, boolean forward) {
@@ -151,5 +159,9 @@ public class GameLogic {
 			System.out.print('\n');
 			System.out.flush();
 		}
+	}
+
+	public long[][] getGrid() {
+		return this.grid;
 	}
 }
