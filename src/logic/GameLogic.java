@@ -67,6 +67,15 @@ public class GameLogic {
 		}
 	}
 
+	/**
+	 * @param idx
+	 *            Index of the column to be squashed.
+	 * @param forward
+	 *            If this parameter is true, the elements of the column are
+	 *            squashed from their lowest index to their highest. If false,
+	 *            they are squashed in the opposite order.
+	 * @return True, if the column could be squashed, false otherwise.
+	 */
 	private boolean squash_column(int idx, boolean forward) {
 		long output[];
 		long input[] = new long[dimen];
@@ -84,6 +93,15 @@ public class GameLogic {
 		}
 	}
 
+	/**
+	 * @param idx
+	 *            Index of the row to be squashed.
+	 * @param forward
+	 *            If this parameter is true, the elements of the row are
+	 *            squashed from their lowest index to their highest. If false,
+	 *            they are squashed in the opposite order.
+	 * @return True, if the column could be squashed, false otherwise.
+	 */
 	private boolean squash_row(int idx, boolean forward) {
 		long output[];
 		long input[] = new long[dimen];
@@ -101,6 +119,12 @@ public class GameLogic {
 		}
 	}
 
+	/**
+	 * @param numbers
+	 *            The array of numbers to be squashed.
+	 * @return This function returns the squashed numbers in a new array if the
+	 *         squashing was successful. Otherwise it returns null.
+	 */
 	private long[] squash(long numbers[]) {
 		long result[] = new long[dimen];
 		boolean squashed = false;
@@ -116,7 +140,7 @@ public class GameLogic {
 				;
 			if (k >= dimen) { // nothing to do, rest of numbers is just zeroes
 				result[j] = numbers[i];
-				squashed = (j!=i);
+				squashed = (j != i);
 				break;
 			}
 			if (numbers[i] == numbers[k]) {
@@ -134,6 +158,13 @@ public class GameLogic {
 		}
 	}
 
+	/**
+	 * Test the grid for the possibility of movements for any cell in any
+	 * direction.
+	 * 
+	 * @throws GameOver
+	 *             If no moves are possible for any cell, GameOver is thrown.
+	 */
 	private void checkGrid() throws GameOver {
 		boolean canMove = false;
 		for (int y = 0; y < dimen; ++y) {
@@ -149,6 +180,19 @@ public class GameLogic {
 		}
 	}
 
+	/**
+	 * For a cell on the grid, test if movement in a direction is possible.
+	 * 
+	 * @param dy
+	 *            Movement step along the Y axis.
+	 * @param dx
+	 *            Movement step along the x axis.
+	 * @param y
+	 *            Y coordinate of the cell.
+	 * @param x
+	 *            X coordinate of the cell.
+	 * @return
+	 */
 	private boolean canMove(int dy, int dx, int y, int x) {
 		return (x + dx >= 0 && x + dx < dimen && y + dy >= 0 && y + dy < dimen)
 				&& (grid[y + dy][x + dx] == 0 || grid[y][x] == grid[y + dy][x + dx]);
@@ -156,7 +200,8 @@ public class GameLogic {
 
 	/**
 	 * Place a number on the playing field, if possible, do nothing otherwise.
-	 * The number is randomly chosen to be either a 2 or a 4, with a bias towards 2s.
+	 * The number is randomly chosen to be either a 2 or a 4, with a bias
+	 * towards 2s.
 	 */
 	public void placeNumber() {
 		Random r = new Random();
