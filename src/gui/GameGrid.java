@@ -9,6 +9,7 @@ import java.awt.event.KeyListener;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
+import javax.swing.border.LineBorder;
 
 import logic.Direction;
 import logic.GameLogic;
@@ -27,6 +28,10 @@ public class GameGrid extends JPanel implements KeyListener {
 	private GameLogic gameLogic;
 	private JLabel[][] numbers;
 
+	/**
+	 * Generate a GameGrid for an instance of GameLogic.
+	 * @param gl The instance of GameLogic for which a GameGrid shall be generated.
+	 */
 	public GameGrid(GameLogic gl) {
 		if (gl == null) {
 			throw new NullPointerException();
@@ -35,8 +40,6 @@ public class GameGrid extends JPanel implements KeyListener {
 		this.dimen = gl.getDimen();
 		this.addKeyListener(this);
 		this.setFocusable(true);
-		this.setMinimumSize(new Dimension(100, 100));
-		//this.setBackground(Color.black);
 		this.setLayout(new GridLayout(dimen,dimen,layoutGap,layoutGap));
 		this.numbers = new JLabel[dimen][dimen];
 		for(int y=0;y<dimen;++y){
@@ -45,13 +48,21 @@ public class GameGrid extends JPanel implements KeyListener {
 				numbers[y][x] = l;
 				l.setHorizontalAlignment(SwingConstants.CENTER);
 				l.setVerticalAlignment(SwingConstants.CENTER);
+				l.setBorder(new LineBorder(Color.GRAY,2,true));
+				l.setMinimumSize(new Dimension(40,40));
+				l.setPreferredSize(l.getMinimumSize());
+				l.setOpaque(true);
 				this.add(l);
 			}
 		}
 	}
 	
+	/**
+	 * Update contents of the GameGrid.
+	 */
 	private void update(){
 		long[][] grid = this.gameLogic.getGrid();
+		float h;
 		String text;
 		Color bgcolor;
 		for(int y=0;y<dimen;++y){
@@ -61,12 +72,13 @@ public class GameGrid extends JPanel implements KeyListener {
 					bgcolor = Color.gray;
 				} else {
 					text = ""+grid[y][x];
-					bgcolor = Color.white;
+					h = ((float)(Long.SIZE-Long.numberOfLeadingZeros(grid[y][x])))/12f;
+					bgcolor = Color.getHSBColor(h, 0.6f, 1.0f);
 				}
 				this.numbers[y][x].setText(text);
 				this.numbers[y][x].setBackground(bgcolor);
 				this.numbers[y][x].repaint();
-				this.repaint();
+				//this.repaint();
 			}
 		}
 	}
@@ -95,7 +107,6 @@ public class GameGrid extends JPanel implements KeyListener {
 				System.err.println("unhandled key pressed");
 			}
 			this.update();
-			this.gameLogic.printGrid();
 		} catch (GameOver g) {
 			System.err.println("GAME OVER");
 		}
