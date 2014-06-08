@@ -20,8 +20,8 @@ public class GameLogic {
 	}
 
 	public GameLogic() {
-		this.grid = new long[dimen][dimen];
-		this.state = GameState.IDLE;
+		grid = new long[dimen][dimen];
+		state = GameState.IDLE;
 	}
 
 	/**
@@ -36,8 +36,8 @@ public class GameLogic {
 				this.grid[i][j] = 0;
 			}
 		}
-		this.placeNumber();
-		this.placeNumber();
+		placeNumber();
+		placeNumber();
 	}
 
 	/**
@@ -65,10 +65,10 @@ public class GameLogic {
 			}
 		}
 		if (did_squash) {
-			this.placeNumber();
+			placeNumber();
 		}
 		if (!checkGrid()) {
-			this.state = GameState.LOST;
+			state = GameState.LOST;
 		}
 	}
 
@@ -233,10 +233,10 @@ public class GameLogic {
 	}
 
 	public long[][] getGrid() {
-		return this.grid;
+		return grid;
 	}
 
 	public GameState getState() {
-		return this.state;
+		return state;
 	}
 }

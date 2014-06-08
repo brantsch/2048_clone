@@ -2,10 +2,13 @@ package gui;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
+import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
@@ -13,7 +16,6 @@ import javax.swing.border.LineBorder;
 
 import logic.Direction;
 import logic.GameLogic;
-import logic.GameState;
 
 public class GameGrid extends JPanel implements KeyListener {
 	/* constants */
@@ -28,6 +30,7 @@ public class GameGrid extends JPanel implements KeyListener {
 	/* attributes */
 	private GameLogic gameLogic;
 	private JLabel[][] numbers;
+	private JLabel messageLabel;
 
 	/**
 	 * Generate a GameGrid for an instance of GameLogic.
@@ -40,13 +43,29 @@ public class GameGrid extends JPanel implements KeyListener {
 		if (gl == null) {
 			throw new NullPointerException();
 		}
-		this.gameLogic = gl;
-		this.dimen = gl.getDimen();
-		this.addKeyListener(this);
-		this.setFocusable(true);
-		this.setLayout(new GridLayout(dimen, dimen, layoutGap, layoutGap));
-		this.numbers = new JLabel[dimen][dimen];
+		gameLogic = gl;
+		dimen = gl.getDimen();
+		addKeyListener(this);
+		setFocusable(true);
+		GridBagLayout gridbag = new GridBagLayout();
+		GridBagConstraints c = new GridBagConstraints();
+		setLayout(gridbag);
+
+		messageLabel = new JLabel("", JLabel.CENTER);
+		messageLabel.setVerticalAlignment(SwingConstants.CENTER);
+		c.gridy = 0;
+		c.gridx = 0;
+		c.ipady = 50;
+		c.gridwidth = dimen;
+		c.fill = GridBagConstraints.BOTH;
+		gridbag.setConstraints(messageLabel, c);
+		add(messageLabel);
+
+		numbers = new JLabel[dimen][dimen];
+		c = new GridBagConstraints();
+		c.fill = GridBagConstraints.HORIZONTAL;
 		for (int y = 0; y < dimen; ++y) {
+			c.gridwidth = 1;
 			for (int x = 0; x < dimen; ++x) {
 				JLabel l = new JLabel();
 				numbers[y][x] = l;
@@ -56,17 +75,21 @@ public class GameGrid extends JPanel implements KeyListener {
 				l.setMinimumSize(new Dimension(60, 60));
 				l.setPreferredSize(l.getMinimumSize());
 				l.setOpaque(true);
-				this.add(l);
+				c.gridy = y + 1;
+				c.gridx = x;
+				gridbag.setConstraints(l, c);
+				add(l);
 			}
 		}
-		this.update();
+		update();
 	}
 
 	/**
 	 * Update contents of the GameGrid.
 	 */
 	private void update() {
-		long[][] grid = this.gameLogic.getGrid();
+		long[][] grid = gameLogic.getGrid();
+		String message;
 		float h;
 		String text;
 		Color bgcolor;
@@ -85,6 +108,17 @@ public class GameGrid extends JPanel implements KeyListener {
 				numbers[y][x].setBackground(bgcolor);
 			}
 		}
+		switch (gameLogic.getState()) {
+		case IDLE:
+			message = "Press any key to start";
+			break;
+		case LOST:
+			message = "Game Over. Press ESC to restart.";
+			break;
+		default:
+			message = "";
+		}
+		messageLabel.setText(message);
 	}
 
 	@Override

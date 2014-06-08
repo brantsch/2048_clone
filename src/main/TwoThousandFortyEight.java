@@ -8,7 +8,6 @@ import gui.GameGrid;
 import javax.swing.JFrame;
 
 import logic.GameLogic;
-import logic.Direction;
 
 /**
  * @author Peter Brantsch
