@@ -137,24 +137,19 @@ public class GameGrid extends JPanel implements KeyListener {
 			switch (ke.getKeyCode()) {
 			case KEY_UP:
 				gameLogic.doMove(Direction.UP);
-				System.err.println("up key pressed");
 				break;
 			case KEY_DOWN:
 				gameLogic.doMove(Direction.DOWN);
-				System.err.println("down key pressed");
 				break;
 			case KEY_LEFT:
 				gameLogic.doMove(Direction.LEFT);
-				System.err.println("left key pressed");
 				break;
 			case KEY_RIGHT:
 				gameLogic.doMove(Direction.RIGHT);
-				System.err.println("right key pressed");
 				break;
 			case KEY_RESET:
 				gameLogic.reset();
 			default:
-				System.err.println("unhandled key pressed");
 			}
 			update();
 			break;
