@@ -79,7 +79,6 @@ public class GameGrid extends JPanel implements KeyListener {
 					text = "" + grid[y][x];
 					/* log2(2048) = 11, therefore the 12th bit must be set */
 					h = ((float) (Long.SIZE - Long.numberOfLeadingZeros(grid[y][x]))) / 12f;
-					System.out.println(h);
 					bgcolor = Color.getHSBColor(h, 0.6f, 1.0f);
 				}
 				numbers[y][x].setText(text);
@@ -90,8 +89,12 @@ public class GameGrid extends JPanel implements KeyListener {
 
 	@Override
 	public void keyPressed(KeyEvent ke) {
-		switch (this.gameLogic.getState()) {
+		switch (gameLogic.getState()) {
 		case LOST:
+			if(ke.getKeyCode() == KEY_RESET){
+				gameLogic.reset();
+			}
+			break;
 		case IDLE: /* press any key to start/reset */
 			gameLogic.reset();
 			update();
