@@ -49,12 +49,13 @@ public class GameGrid extends JPanel implements KeyListener {
 				l.setHorizontalAlignment(SwingConstants.CENTER);
 				l.setVerticalAlignment(SwingConstants.CENTER);
 				l.setBorder(new LineBorder(Color.GRAY,2,true));
-				l.setMinimumSize(new Dimension(40,40));
+				l.setMinimumSize(new Dimension(60,60));
 				l.setPreferredSize(l.getMinimumSize());
 				l.setOpaque(true);
 				this.add(l);
 			}
 		}
+		this.update();
 	}
 	
 	/**
@@ -77,8 +78,6 @@ public class GameGrid extends JPanel implements KeyListener {
 				}
 				this.numbers[y][x].setText(text);
 				this.numbers[y][x].setBackground(bgcolor);
-				this.numbers[y][x].repaint();
-				//this.repaint();
 			}
 		}
 	}
