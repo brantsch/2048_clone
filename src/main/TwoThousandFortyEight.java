@@ -9,7 +9,6 @@ import javax.swing.JFrame;
 
 import logic.GameLogic;
 import logic.Direction;
-import logic.GameOver;
 
 /**
  * @author Peter Brantsch

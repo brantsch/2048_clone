@@ -13,7 +13,7 @@ import javax.swing.border.LineBorder;
 
 import logic.Direction;
 import logic.GameLogic;
-import logic.GameOver;
+import logic.GameState;
 
 public class GameGrid extends JPanel implements KeyListener {
 	/* constants */
@@ -21,16 +21,20 @@ public class GameGrid extends JPanel implements KeyListener {
 	private static final int KEY_DOWN = KeyEvent.VK_DOWN;
 	private static final int KEY_RIGHT = KeyEvent.VK_RIGHT;
 	private static final int KEY_LEFT = KeyEvent.VK_LEFT;
+	private static final int KEY_RESET = KeyEvent.VK_ESCAPE;
 	private static final int layoutGap = 5;
 	private final int dimen;
-	
+
 	/* attributes */
 	private GameLogic gameLogic;
 	private JLabel[][] numbers;
 
 	/**
 	 * Generate a GameGrid for an instance of GameLogic.
-	 * @param gl The instance of GameLogic for which a GameGrid shall be generated.
+	 * 
+	 * @param gl
+	 *            The instance of GameLogic for which a GameGrid shall be
+	 *            generated.
 	 */
 	public GameGrid(GameLogic gl) {
 		if (gl == null) {
@@ -40,16 +44,16 @@ public class GameGrid extends JPanel implements KeyListener {
 		this.dimen = gl.getDimen();
 		this.addKeyListener(this);
 		this.setFocusable(true);
-		this.setLayout(new GridLayout(dimen,dimen,layoutGap,layoutGap));
+		this.setLayout(new GridLayout(dimen, dimen, layoutGap, layoutGap));
 		this.numbers = new JLabel[dimen][dimen];
-		for(int y=0;y<dimen;++y){
-			for(int x=0;x<dimen;++x){
+		for (int y = 0; y < dimen; ++y) {
+			for (int x = 0; x < dimen; ++x) {
 				JLabel l = new JLabel();
 				numbers[y][x] = l;
 				l.setHorizontalAlignment(SwingConstants.CENTER);
 				l.setVerticalAlignment(SwingConstants.CENTER);
-				l.setBorder(new LineBorder(Color.GRAY,2,true));
-				l.setMinimumSize(new Dimension(60,60));
+				l.setBorder(new LineBorder(Color.GRAY, 2, true));
+				l.setMinimumSize(new Dimension(60, 60));
 				l.setPreferredSize(l.getMinimumSize());
 				l.setOpaque(true);
 				this.add(l);
@@ -57,34 +61,42 @@ public class GameGrid extends JPanel implements KeyListener {
 		}
 		this.update();
 	}
-	
+
 	/**
 	 * Update contents of the GameGrid.
 	 */
-	private void update(){
+	private void update() {
 		long[][] grid = this.gameLogic.getGrid();
 		float h;
 		String text;
 		Color bgcolor;
-		for(int y=0;y<dimen;++y){
-			for(int x=0;x<dimen;++x){
-				if(grid[y][x] == 0){
+		for (int y = 0; y < dimen; ++y) {
+			for (int x = 0; x < dimen; ++x) {
+				if (grid[y][x] == 0) {
 					text = "";
 					bgcolor = Color.gray;
 				} else {
-					text = ""+grid[y][x];
-					h = ((float)(Long.SIZE-Long.numberOfLeadingZeros(grid[y][x])))/12f;
+					text = "" + grid[y][x];
+					/* log2(2048) = 11, therefore the 12th bit must be set */
+					h = ((float) (Long.SIZE - Long.numberOfLeadingZeros(grid[y][x]))) / 12f;
+					System.out.println(h);
 					bgcolor = Color.getHSBColor(h, 0.6f, 1.0f);
 				}
-				this.numbers[y][x].setText(text);
-				this.numbers[y][x].setBackground(bgcolor);
+				numbers[y][x].setText(text);
+				numbers[y][x].setBackground(bgcolor);
 			}
 		}
 	}
 
 	@Override
 	public void keyPressed(KeyEvent ke) {
-		try {
+		switch (this.gameLogic.getState()) {
+		case LOST:
+		case IDLE: /* press any key to start/reset */
+			gameLogic.reset();
+			update();
+			break;
+		case RUNNING:
 			switch (ke.getKeyCode()) {
 			case KEY_UP:
 				gameLogic.doMove(Direction.UP);
@@ -102,14 +114,14 @@ public class GameGrid extends JPanel implements KeyListener {
 				gameLogic.doMove(Direction.RIGHT);
 				System.err.println("right key pressed");
 				break;
+			case KEY_RESET:
+				gameLogic.reset();
 			default:
 				System.err.println("unhandled key pressed");
 			}
-			this.update();
-		} catch (GameOver g) {
-			System.err.println("GAME OVER");
+			update();
+			break;
 		}
-
 	}
 
 	@Override

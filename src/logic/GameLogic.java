@@ -3,9 +3,6 @@
  */
 package logic;
 
-import logic.Tuple;
-import logic.GameOver;
-
 import java.util.Random;
 import java.util.ArrayList;
 
@@ -14,16 +11,26 @@ import java.util.ArrayList;
  * 
  */
 public class GameLogic {
+	private long grid[][];
 	private final int dimen = 4;
+	private GameState state;
 
 	public int getDimen() {
 		return dimen;
 	}
 
-	private long grid[][];
-
 	public GameLogic() {
 		this.grid = new long[dimen][dimen];
+		this.state = GameState.IDLE;
+	}
+
+	/**
+	 * Reset the GameLogic to its initial state.
+	 * 
+	 * Fills the grid with empty cells (zeroes), then places two numbers.
+	 */
+	public void reset() {
+		this.state = GameState.RUNNING;
 		for (int i = 0; i < dimen; ++i) {
 			for (int j = 0; j < dimen; ++j) {
 				this.grid[i][j] = 0;
@@ -36,12 +43,10 @@ public class GameLogic {
 	/**
 	 * Perform a move in the given direction.
 	 * 
-	 * @return True, if further moves are possible.
 	 * @param d
 	 *            The direction in which a move would be attempted.
 	 */
-	public void doMove(Direction d) throws GameOver {
-		checkGrid();
+	public void doMove(Direction d) {
 		boolean did_squash = false;
 		for (int i = 0; i < dimen; ++i) {
 			switch (d) {
@@ -60,10 +65,10 @@ public class GameLogic {
 			}
 		}
 		if (did_squash) {
-			System.out.println("squashed");
 			this.placeNumber();
-		} else {
-			System.out.println("didn't squash");
+		}
+		if (!checkGrid()) {
+			this.state = GameState.LOST;
 		}
 	}
 
@@ -162,10 +167,9 @@ public class GameLogic {
 	 * Test the grid for the possibility of movements for any cell in any
 	 * direction.
 	 * 
-	 * @throws GameOver
-	 *             If no moves are possible for any cell, GameOver is thrown.
+	 * @return True, if any moves are possible for any cell, otherwise false.
 	 */
-	private void checkGrid() throws GameOver {
+	private boolean checkGrid() {
 		boolean canMove = false;
 		for (int y = 0; y < dimen; ++y) {
 			for (int x = 0; x < dimen; ++x) {
@@ -175,9 +179,7 @@ public class GameLogic {
 				canMove |= canMove(0, -1, y, x);
 			}
 		}
-		if (!canMove) {
-			throw new GameOver();
-		}
+		return canMove;
 	}
 
 	/**
@@ -203,7 +205,7 @@ public class GameLogic {
 	 * The number is randomly chosen to be either a 2 or a 4, with a bias
 	 * towards 2s.
 	 */
-	public void placeNumber() {
+	private void placeNumber() {
 		Random r = new Random();
 		long number = (r.nextFloat() < 0.8f ? 2 : 4);
 		ArrayList<Tuple<Integer>> freeCells = new ArrayList<Tuple<Integer>>();
@@ -232,5 +234,9 @@ public class GameLogic {
 
 	public long[][] getGrid() {
 		return this.grid;
+	}
+
+	public GameState getState() {
+		return this.state;
 	}
 }
