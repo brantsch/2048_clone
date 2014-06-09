@@ -1,14 +1,14 @@
 package gui;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
-import javax.swing.JButton;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
@@ -31,6 +31,7 @@ public class GameGrid extends JPanel implements KeyListener {
 	private GameLogic gameLogic;
 	private JLabel[][] numbers;
 	private JLabel messageLabel;
+	private JPanel innerPanel;
 
 	/**
 	 * Generate a GameGrid for an instance of GameLogic.
@@ -47,25 +48,16 @@ public class GameGrid extends JPanel implements KeyListener {
 		dimen = gl.getDimen();
 		addKeyListener(this);
 		setFocusable(true);
-		GridBagLayout gridbag = new GridBagLayout();
-		GridBagConstraints c = new GridBagConstraints();
-		setLayout(gridbag);
+		setLayout(new BoxLayout(this,BoxLayout.PAGE_AXIS));
 
 		messageLabel = new JLabel("", JLabel.CENTER);
 		messageLabel.setVerticalAlignment(SwingConstants.CENTER);
-		c.gridy = 0;
-		c.gridx = 0;
-		c.ipady = 50;
-		c.gridwidth = dimen;
-		c.fill = GridBagConstraints.BOTH;
-		gridbag.setConstraints(messageLabel, c);
+		messageLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 		add(messageLabel);
 
 		numbers = new JLabel[dimen][dimen];
-		c = new GridBagConstraints();
-		c.fill = GridBagConstraints.HORIZONTAL;
+		innerPanel = new JPanel(new GridLayout(dimen,dimen,layoutGap,layoutGap));
 		for (int y = 0; y < dimen; ++y) {
-			c.gridwidth = 1;
 			for (int x = 0; x < dimen; ++x) {
 				JLabel l = new JLabel();
 				numbers[y][x] = l;
@@ -74,13 +66,12 @@ public class GameGrid extends JPanel implements KeyListener {
 				l.setBorder(new LineBorder(Color.GRAY, 2, true));
 				l.setMinimumSize(new Dimension(60, 60));
 				l.setPreferredSize(l.getMinimumSize());
+				l.setMaximumSize(l.getMinimumSize());
 				l.setOpaque(true);
-				c.gridy = y + 1;
-				c.gridx = x;
-				gridbag.setConstraints(l, c);
-				add(l);
+				innerPanel.add(l);
 			}
 		}
+		add(innerPanel);
 		update();
 	}
 
