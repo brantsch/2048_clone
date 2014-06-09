@@ -7,7 +7,6 @@ import java.awt.GridLayout;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
-import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -48,7 +47,7 @@ public class GameGrid extends JPanel implements KeyListener {
 		dimen = gl.getDimen();
 		addKeyListener(this);
 		setFocusable(true);
-		setLayout(new BoxLayout(this,BoxLayout.PAGE_AXIS));
+		setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
 
 		messageLabel = new JLabel("", JLabel.CENTER);
 		messageLabel.setVerticalAlignment(SwingConstants.CENTER);
@@ -56,7 +55,9 @@ public class GameGrid extends JPanel implements KeyListener {
 		add(messageLabel);
 
 		numbers = new JLabel[dimen][dimen];
-		innerPanel = new JPanel(new GridLayout(dimen,dimen,layoutGap,layoutGap));
+		innerPanel = new JPanel(new GridLayout(dimen, dimen, layoutGap, layoutGap));
+		Dimension minimumTileSize = new Dimension(60, 60);
+		Dimension maxInnerPanelSize = new Dimension(dimen * minimumTileSize.width + (dimen - 1) * layoutGap, dimen * minimumTileSize.height + (dimen - 1) * layoutGap);
 		for (int y = 0; y < dimen; ++y) {
 			for (int x = 0; x < dimen; ++x) {
 				JLabel l = new JLabel();
@@ -64,13 +65,13 @@ public class GameGrid extends JPanel implements KeyListener {
 				l.setHorizontalAlignment(SwingConstants.CENTER);
 				l.setVerticalAlignment(SwingConstants.CENTER);
 				l.setBorder(new LineBorder(Color.GRAY, 2, true));
-				l.setMinimumSize(new Dimension(60, 60));
-				l.setPreferredSize(l.getMinimumSize());
-				l.setMaximumSize(l.getMinimumSize());
+				l.setMinimumSize(minimumTileSize);
 				l.setOpaque(true);
 				innerPanel.add(l);
 			}
 		}
+		innerPanel.setPreferredSize(maxInnerPanelSize);
+		innerPanel.setMaximumSize(maxInnerPanelSize);
 		add(innerPanel);
 		update();
 	}
@@ -119,7 +120,7 @@ public class GameGrid extends JPanel implements KeyListener {
 	public void keyPressed(KeyEvent ke) {
 		switch (gameLogic.getState()) {
 		case LOST:
-			if(ke.getKeyCode() == KEY_RESET){
+			if (ke.getKeyCode() == KEY_RESET) {
 				gameLogic.reset();
 			}
 			break;
