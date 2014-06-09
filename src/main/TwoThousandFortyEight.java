@@ -1,7 +1,6 @@
 package main;
 
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
+import java.awt.BorderLayout;
 
 import gui.GameGrid;
 
@@ -23,8 +22,8 @@ public abstract class TwoThousandFortyEight {
 		GameLogic gl = new GameLogic();
 		GameGrid g = new GameGrid(gl);
 		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		f.setLayout(new GridBagLayout());
-		f.add(g,new GridBagConstraints());
+		f.setLayout(new BorderLayout());
+		f.add(g,BorderLayout.CENTER);
 		f.pack();
 		f.setVisible(true);
 	}
