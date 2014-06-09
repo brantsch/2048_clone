@@ -31,6 +31,7 @@ public class GameGrid extends JPanel implements KeyListener {
 	private GameLogic gameLogic;
 	private JLabel[][] numbers;
 	private JLabel messageLabel;
+	private JPanel innerPanel;
 
 	/**
 	 * Generate a GameGrid for an instance of GameLogic.
@@ -47,25 +48,21 @@ public class GameGrid extends JPanel implements KeyListener {
 		dimen = gl.getDimen();
 		addKeyListener(this);
 		setFocusable(true);
-		GridBagLayout gridbag = new GridBagLayout();
+		setLayout(new GridBagLayout());
 		GridBagConstraints c = new GridBagConstraints();
-		setLayout(gridbag);
 
 		messageLabel = new JLabel("", JLabel.CENTER);
 		messageLabel.setVerticalAlignment(SwingConstants.CENTER);
 		c.gridy = 0;
 		c.gridx = 0;
 		c.ipady = 50;
-		c.gridwidth = dimen;
+		c.gridwidth = 1;//dimen;
 		c.fill = GridBagConstraints.BOTH;
-		gridbag.setConstraints(messageLabel, c);
-		add(messageLabel);
+		add(messageLabel,c);
 
 		numbers = new JLabel[dimen][dimen];
-		c = new GridBagConstraints();
-		c.fill = GridBagConstraints.HORIZONTAL;
+		innerPanel = new JPanel(new GridLayout(dimen,dimen,layoutGap,layoutGap));
 		for (int y = 0; y < dimen; ++y) {
-			c.gridwidth = 1;
 			for (int x = 0; x < dimen; ++x) {
 				JLabel l = new JLabel();
 				numbers[y][x] = l;
@@ -74,13 +71,15 @@ public class GameGrid extends JPanel implements KeyListener {
 				l.setBorder(new LineBorder(Color.GRAY, 2, true));
 				l.setMinimumSize(new Dimension(60, 60));
 				l.setPreferredSize(l.getMinimumSize());
+				l.setMaximumSize(l.getMinimumSize());
 				l.setOpaque(true);
-				c.gridy = y + 1;
-				c.gridx = x;
-				gridbag.setConstraints(l, c);
-				add(l);
+				innerPanel.add(l);
 			}
 		}
+		c.ipady = 0;
+		c.gridwidth = 1;//dimen;
+		c.gridy++;
+		add(innerPanel,c);
 		update();
 	}
 
