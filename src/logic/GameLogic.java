@@ -52,16 +52,16 @@ public class GameLogic {
 		for (int i = 0; i < dimen; ++i) {
 			switch (d) {
 			case DOWN:
-				did_squash |= squash_column(i, true);
+				did_squash |= squashColumn(i, true);
 				break;
 			case UP:
-				did_squash |= squash_column(i, false);
+				did_squash |= squashColumn(i, false);
 				break;
 			case RIGHT:
-				did_squash |= squash_row(i, true);
+				did_squash |= squashRow(i, true);
 				break;
 			case LEFT:
-				did_squash |= squash_row(i, false);
+				did_squash |= squashRow(i, false);
 				break;
 			}
 		}
@@ -80,7 +80,7 @@ public class GameLogic {
 	 *            they are squashed in the opposite order.
 	 * @return True, if the column could be squashed, false otherwise.
 	 */
-	private boolean squash_column(int idx, boolean forward) {
+	private boolean squashColumn(int idx, boolean forward) {
 		long output[];
 		long input[] = new long[dimen];
 		for (int i = 0; i < dimen; ++i) {
@@ -106,7 +106,7 @@ public class GameLogic {
 	 *            they are squashed in the opposite order.
 	 * @return True, if the column could be squashed, false otherwise.
 	 */
-	private boolean squash_row(int idx, boolean forward) {
+	private boolean squashRow(int idx, boolean forward) {
 		long output[];
 		long input[] = new long[dimen];
 		for (int i = 0; i < dimen; ++i) {
