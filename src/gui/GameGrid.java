@@ -115,6 +115,9 @@ public class GameGrid extends JPanel implements KeyListener {
 		case LOST:
 			message = "Game Over. Press ESC to restart.";
 			break;
+		case WON:
+			message = "Congratulations! You won! However, you can still continue playing.";
+			break;
 		default:
 			message = "";
 		}
@@ -133,6 +136,7 @@ public class GameGrid extends JPanel implements KeyListener {
 			gameLogic.reset();
 			update();
 			break;
+		case WON:
 		case RUNNING:
 			switch (ke.getKeyCode()) {
 			case KEY_UP:

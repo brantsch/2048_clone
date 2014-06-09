@@ -1,5 +1,5 @@
 package logic;
 
 public enum GameState {
-	IDLE,RUNNING,LOST;
+	IDLE,RUNNING,LOST,WON;
 }

@@ -13,6 +13,7 @@ import java.util.ArrayList;
 public class GameLogic {
 	private long grid[][];
 	private final int dimen = 4;
+	private final long won_threshold = 2048;
 	private GameState state;
 
 	public int getDimen() {
@@ -67,9 +68,7 @@ public class GameLogic {
 		if (did_squash) {
 			placeNumber();
 		}
-		if (!checkGrid()) {
-			state = GameState.LOST;
-		}
+		state = checkGrid();
 	}
 
 	/**
@@ -165,21 +164,33 @@ public class GameLogic {
 
 	/**
 	 * Test the grid for the possibility of movements for any cell in any
-	 * direction.
+	 * direction, and for any cell value large enough for the player to have
+	 * won.
 	 * 
-	 * @return True, if any moves are possible for any cell, otherwise false.
+	 * @return Depending on the values of the cells on the grid and the previous
+	 *         GameState, determine the next GameState.
 	 */
-	private boolean checkGrid() {
+	private GameState checkGrid() {
 		boolean canMove = false;
+		boolean hasWon = false;
 		for (int y = 0; y < dimen; ++y) {
 			for (int x = 0; x < dimen; ++x) {
 				canMove |= canMove(1, 0, y, x);
 				canMove |= canMove(-1, 0, y, x);
 				canMove |= canMove(0, 1, y, x);
 				canMove |= canMove(0, -1, y, x);
+				if (grid[y][x] >= won_threshold) {
+					hasWon = true;
+				}
 			}
 		}
-		return canMove;
+		GameState nextState = state;
+		if(hasWon && state != GameState.WON){
+			nextState = GameState.WON;
+		} else if (!canMove) {
+			nextState = GameState.LOST;
+		}
+		return nextState;
 	}
 
 	/**
