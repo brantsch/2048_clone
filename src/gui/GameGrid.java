@@ -1,14 +1,14 @@
 package gui;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
-import javax.swing.JButton;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
@@ -48,17 +48,12 @@ public class GameGrid extends JPanel implements KeyListener {
 		dimen = gl.getDimen();
 		addKeyListener(this);
 		setFocusable(true);
-		setLayout(new GridBagLayout());
-		GridBagConstraints c = new GridBagConstraints();
+		setLayout(new BoxLayout(this,BoxLayout.PAGE_AXIS));
 
 		messageLabel = new JLabel("", JLabel.CENTER);
 		messageLabel.setVerticalAlignment(SwingConstants.CENTER);
-		c.gridy = 0;
-		c.gridx = 0;
-		c.ipady = 50;
-		c.gridwidth = 1;//dimen;
-		c.fill = GridBagConstraints.BOTH;
-		add(messageLabel,c);
+		messageLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+		add(messageLabel);
 
 		numbers = new JLabel[dimen][dimen];
 		innerPanel = new JPanel(new GridLayout(dimen,dimen,layoutGap,layoutGap));
@@ -76,10 +71,7 @@ public class GameGrid extends JPanel implements KeyListener {
 				innerPanel.add(l);
 			}
 		}
-		c.ipady = 0;
-		c.gridwidth = 1;//dimen;
-		c.gridy++;
-		add(innerPanel,c);
+		add(innerPanel);
 		update();
 	}
 
