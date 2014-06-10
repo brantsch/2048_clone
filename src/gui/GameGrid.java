@@ -16,6 +16,12 @@ import javax.swing.border.LineBorder;
 import logic.Direction;
 import logic.GameLogic;
 
+/**
+ * A subclass of JPanel implementing the playing field for a game of 2048.
+ * 
+ * @author Peter Brantsch
+ * 
+ */
 public class GameGrid extends JPanel implements KeyListener {
 	/* constants */
 	private static final int KEY_UP = KeyEvent.VK_UP;
@@ -116,6 +122,11 @@ public class GameGrid extends JPanel implements KeyListener {
 		messageLabel.setText(message);
 	}
 
+	/**
+	 * Currently only keyPressed is handled.
+	 * 
+	 * @see java.awt.event.KeyListener#keyPressed(java.awt.event.KeyEvent)
+	 */
 	@Override
 	public void keyPressed(KeyEvent ke) {
 		switch (gameLogic.getState()) {
@@ -152,13 +163,21 @@ public class GameGrid extends JPanel implements KeyListener {
 		}
 	}
 
+	/**
+	 * Empty override; Ignore this type of event.
+	 * 
+	 * @see java.awt.event.KeyListener#keyReleased(java.awt.event.KeyEvent)
+	 */
 	@Override
 	public void keyReleased(KeyEvent arg0) {
-		// this type of event is currently ignored
 	}
 
+	/**
+	 * Empty override; Ignore this type of event.
+	 * 
+	 * @see java.awt.event.KeyListener#keyTyped(java.awt.event.KeyEvent)
+	 */
 	@Override
 	public void keyTyped(KeyEvent arg0) {
-		// we currently ignore typed keys
 	}
 }

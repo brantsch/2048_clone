@@ -1,12 +1,11 @@
-/**
- * The package containing the actual game logic.
- */
 package logic;
 
 import java.util.Random;
 import java.util.ArrayList;
 
 /**
+ * Implement the logic for a game of 2048.
+ * 
  * @author Peter Brantsch
  * 
  */
@@ -185,7 +184,7 @@ public class GameLogic {
 			}
 		}
 		GameState nextState = state;
-		if(hasWon && state != GameState.WON){
+		if (hasWon && state != GameState.WON) {
 			nextState = GameState.WON;
 		} else if (!canMove) {
 			nextState = GameState.LOST;
